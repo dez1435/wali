@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>I Love You Lyla</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    background: #1a1a2e;
+    color: white;
+}
+
+/* Background flowers */
+.background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(#ff77aa 2px, transparent 2px),
+        radial-gradient(#77ffcc 2px, transparent 2px),
+        radial-gradient(#ffff77 2px, transparent 2px);
+    background-size: 40px 40px;
+    opacity: 0.4;
+}
+
+/* Center box */
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.5);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3em;
+    margin: 0;
+    animation: rainbow 5s infinite linear;
+}
+
+@keyframes rainbow {
+    0% { color: #ff77aa; }
+    25% { color: #77ffcc; }
+    50% { color: #ffff77; }
+    75% { color: #a77aff; }
+    100% { color: #ff77aa; }
+}
+
+/* Petals */
+.petal {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: pink;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    from { transform: translateY(-10vh) rotate(0deg); }
+    to { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* Hearts */
+.heart {
+    position: absolute;
+    font-size: 20px;
+    animation: floatUp 2s ease-out forwards;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-100px); opacity: 0; }
+}
+
+/* Hidden video */
+iframe {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="center">
+    <h1 id="text"></h1>
+    <p>In every pixel of my heart 💖</p>
+</div>
+
+<!-- 🎵 Lovers Rock (YouTube embed) -->
+<iframe 
+src="https://www.youtube.com/embed/j_sG_Juncn8?autoplay=1&loop=1&playlist=j_sG_Juncn8"
+allow="autoplay">
+</iframe>
+
+<script>
+// Typing effect
+let message = "I Love You Lyla ❤️";
+let i = 0;
+function type() {
+    if (i < message.length) {
+        document.getElementById("text").innerHTML += message.charAt(i);
+        i++;
+        setTimeout(type, 100);
+    }
+}
+type();
+
+// Petals
+for (let i = 0; i < 30; i++) {
+    let p = document.createElement("div");
+    p.className = "petal";
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.animationDuration = (5 + Math.random() * 5) + "s";
+    document.body.appendChild(p);
+}
+
+// Click hearts
+document.addEventListener("click", function(e) {
+    let h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤️";
+    h.style.left = e.clientX + "px";
+    h.style.top = e.clientY + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 2000);
+});
+</script>
+
+</body>
+</html>
