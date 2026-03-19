@@ -2,84 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>I Love You Lyla</title>
+<title>Catch the Heart 💖</title>
 
 <style>
 body {
     margin: 0;
     overflow: hidden;
-    font-family: 'Courier New', monospace;
     background: #1a1a2e;
+    font-family: Arial;
     color: white;
-}
-
-/* Background flowers */
-.background {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(#ff77aa 2px, transparent 2px),
-        radial-gradient(#77ffcc 2px, transparent 2px),
-        radial-gradient(#ffff77 2px, transparent 2px);
-    background-size: 40px 40px;
-    opacity: 0.4;
-}
-
-/* Center box */
-.center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.5);
-    padding: 40px;
-    border-radius: 15px;
     text-align: center;
 }
 
-h1 {
-    font-size: 3em;
-    margin: 0;
-    animation: rainbow 5s infinite linear;
-}
-
-@keyframes rainbow {
-    0% { color: #ff77aa; }
-    25% { color: #77ffcc; }
-    50% { color: #ffff77; }
-    75% { color: #a77aff; }
-    100% { color: #ff77aa; }
-}
-
-/* Petals */
-.petal {
+#player {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    bottom: 20px;
+    left: 50%;
+    width: 80px;
+    height: 20px;
     background: pink;
-    animation: fall linear infinite;
+    transform: translateX(-50%);
 }
 
-@keyframes fall {
-    from { transform: translateY(-10vh) rotate(0deg); }
-    to { transform: translateY(110vh) rotate(360deg); }
-}
-
-/* Hearts */
 .heart {
     position: absolute;
-    font-size: 20px;
-    animation: floatUp 2s ease-out forwards;
+    font-size: 24px;
 }
 
-@keyframes floatUp {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-100px); opacity: 0; }
+#score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
 
-/* Hidden video */
-iframe {
+#gameOver {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    font-size: 30px;
     display: none;
 }
 </style>
@@ -87,51 +47,72 @@ iframe {
 
 <body>
 
-<div class="background"></div>
-
-<div class="center">
-    <h1 id="text"></h1>
-    <p>In every pixel of my heart 💖</p>
-</div>
-
-<!-- 🎵 Lovers Rock (YouTube embed) -->
-<iframe 
-src="https://www.youtube.com/embed/j_sG_Juncn8?autoplay=1&loop=1&playlist=j_sG_Juncn8"
-allow="autoplay">
-</iframe>
+<div id="score">Score: 0</div>
+<div id="gameOver">Game Over 💔</div>
+<div id="player"></div>
 
 <script>
-// Typing effect
-let message = "I Love You Lyla ❤️";
-let i = 0;
-function type() {
-    if (i < message.length) {
-        document.getElementById("text").innerHTML += message.charAt(i);
-        i++;
-        setTimeout(type, 100);
-    }
-}
-type();
+let player = document.getElementById("player");
+let score = 0;
+let misses = 0;
+let gameOver = false;
 
-// Petals
-for (let i = 0; i < 30; i++) {
-    let p = document.createElement("div");
-    p.className = "petal";
-    p.style.left = Math.random() * 100 + "vw";
-    p.style.animationDuration = (5 + Math.random() * 5) + "s";
-    document.body.appendChild(p);
-}
-
-// Click hearts
-document.addEventListener("click", function(e) {
-    let h = document.createElement("div");
-    h.className = "heart";
-    h.innerHTML = "❤️";
-    h.style.left = e.clientX + "px";
-    h.style.top = e.clientY + "px";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 2000);
+// Move player
+document.addEventListener("mousemove", (e) => {
+    player.style.left = e.clientX + "px";
 });
+
+// Create hearts
+function spawnHeart() {
+    if (gameOver) return;
+
+    let heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.top = "-30px";
+    document.body.appendChild(heart);
+
+    let fall = setInterval(() => {
+        if (gameOver) {
+            clearInterval(fall);
+            heart.remove();
+            return;
+        }
+
+        let top = parseInt(heart.style.top);
+        heart.style.top = top + 5 + "px";
+
+        let rect1 = heart.getBoundingClientRect();
+        let rect2 = player.getBoundingClientRect();
+
+        // Catch
+        if (
+            rect1.bottom > rect2.top &&
+            rect1.left < rect2.right &&
+            rect1.right > rect2.left
+        ) {
+            score++;
+            document.getElementById("score").innerText = "Score: " + score;
+            heart.remove();
+            clearInterval(fall);
+        }
+
+        // Miss
+        if (top > window.innerHeight) {
+            misses++;
+            heart.remove();
+            clearInterval(fall);
+
+            if (misses >= 5) {
+                gameOver = true;
+                document.getElementById("gameOver").style.display = "block";
+            }
+        }
+    }, 30);
+}
+
+setInterval(spawnHeart, 800);
 </script>
 
 </body>
